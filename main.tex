@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{hyperref}
+
+\newcommand{\profname}{Prof. Jayesh Dhodiya}
+\title{Linear Programming Model for Portfolio Optimization}
+\author{Krishnam Lad\\ \textit{Supervised by \profname}}
+\date{07 June, 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Linear Programming can be used as a tool for optimization. Provided suitable constraints, it can be used to maximize or minimize objectives such as \textit{profits, returns, cost of transportation,etc. } In this paper, the same is done for optimizing the returns as a result of investing in various investment options to create an optimized portfolio. 
+\section{Data Collection}
+Information related to return rate of stocks and risk  was calculated from the Opening and Closing Price. The return rate for Gold ETF and risk score are calculated similarly. The data of the Mutual Fund option was gathered directly from online sources.
+\section{Linear Programming}
+In a linear programming model, we have a objective function to be maximized or minimized subject to constraints. The equations are made in terms of the decision variables, $x_i$'s. In general, we have an objective;
+\[
+\sum_{i=1}^n c_ix_i
+\]
+Subject to: 
+\[
+\sum_{j=1}^n a_{i_j}x_j\leq b_i; \    1\leq i\leq p
+\]
+\[
+\sum_{j=1}^m a_{i_j}x_j\leq b_i; \    p+1\leq i\leq k
+\]
+\[
+\sum_{j=1}^n a_{i_j}x_j\leq b_i; \    k+1\leq i\leq m
+\]
+\[
+x_j\geq 0
+\]
+\section{Formulation of Linear Programming Model}
+In our portfolio optimization problem, we have an initial upper bound of 10L i.e., maximum of 10L can be invested in the portfolio. On the other hand, we also have the following  constraints:
+\begin{enumerate}
+\item Not more than 2L investment in any option. In each option, not more than 2L can be invested. This is done to diversify investment.
+\item Investment in stocks cannot exceed 25\% of the total invested sum.
+\item Atleast 15\% investment in Stock B.
+\item The total risk should not exceed 2.0. This is calculated by using the weighed average of the individual risks and setting it below 2.
+\end{enumerate}
+We have the following investment options: Stock A, Stock B, Gold ETF, Mutual funds and Govt. Bonds.
+Accordingly the decision variables:
+\begin{enumerate}[label=\roman*.]
+\item \(x_1\) denotes the investment made in Stock A.
+\item \(x_2\) denotes the investment made in Stock B.
+\item \(x_3\) denotes the investment made in Gold ETF.
+\item \(x_4\) denotes the investment made in Mutual Funds.
+\item \(x_5\) denotes the investment made in Govt. Bonds.
+\end{enumerate}
+The following table contains the return rate and risk scores of these options:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|} \hline 
+         Investment Options&  Return Rate(\%)& Risk Score\\ \hline 
+         Stock A&  6.75& 0.92\\ \hline 
+         Stock B&  0.42& 0.11\\ \hline 
+         Gold ETF&  0.42& 3.12\\ \hline 
+         Mutual Fund&  1.54& 10.94\\ \hline 
+         Bonds&  7.03& 0\\ \hline
+    \end{tabular}
+    \caption{Data}
+    \label{tab:table1}
+\end{table}
+\newpage
+Thus we have the objective function:
+\[
+Z=0.0675x_1 +0.0042x_2+0.0042x_3+0.0154x_4+0.0703x_5
+\]
+\textit{subject to:}
+\begin{enumerate}[label=\Roman*.]
+    \item \(x_1 + x_2+ x_3 + x_4 + x_5\leq 1000000\)
+    \item \( 0.92x_1 +0.11x_2+3.12x_3+10.94x_4\leq 2(x_1+x_2+x_3+x_4+x_5)\)\newline
+    i.e. \(1.08x_1+1.89_x2-1.12x_3-8.94x_4+2_x5\geq0\)
+    \item \(x_1+x_2\leq0.25(x_1+x_2+x_3+x_4+x_5)\)\newline
+    i.e.\ \(3x_1+3x_2-x_3-x_4-x_5\leq0\)    
+    \item \(x_2\geq0.15(x_1+x2_+x_3+x_4+x_5)\)\newline
+    i.e. \ \(3x_1-17x_2+3x_3+3x_4+3x_5\leq0\)
+    \item \( x_1,x_2,x_3,x_4,x_5\leq200000\)
+    \item \( x_1,x_2,x_3,x_4,x_5\geq0\)
+\end{enumerate}
+The last constraint imposes the fact that the decision variables are positive.
+\section{Results}
+The problem is solved using the Google OR Tools. The code is provided \href{https://github.com/KML1729/Project2024/blob/main/lpsolver.py}{here}. On solving, we get the following investment values:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|} \hline 
+         Investment Option&  Sum to be invested& Return\\ \hline 
+         Stock A&  59,428.21& 4,011.4\\ \hline 
+         Stock B&  89,142.34& 374.5\\ \hline 
+         Gold ETF&  2,00,000& 84000\\ \hline 
+         Mutual Fund&  45,711.57& 703.96\\ \hline 
+         Bonds&  2,00,000& 14,060\\ \hline
+    \end{tabular}
+    \caption{Return on investment}
+    \label{tab:table2}
+\end{table}
+Note that the returns of total 19,989.76 are monthly. The individual returns are mentioned in \ref{tab:table2}. 
+\end{document}
